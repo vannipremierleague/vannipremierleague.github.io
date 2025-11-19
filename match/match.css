@@ -1,0 +1,667 @@
+/* [Your existing 400+ lines of CSS are here and remain unchanged] */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f5f5;
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(135deg, #d63031 0%, #e17055 100%);
+    padding: 40px 20px;
+    color: white;
+    margin-top: 20px;
+}
+
+.hero-content {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.match-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.team {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.team-logo {
+    width: 80px;
+    height: 80px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.team-score {
+    text-align: left;
+}
+
+.team-score h2 {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.team-score .overs {
+    font-size: 16px;
+    opacity: 0.9;
+}
+
+.match-status {
+    text-align: center;
+}
+
+.final-badge {
+    background: #f1c40f;
+    color: #000;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 14px;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.match-info {
+    font-size: 14px;
+    opacity: 0.95;
+    margin-top: 10px;
+}
+
+.overs-display {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.over-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.over-label {
+    font-size: 13px;
+    font-weight: 600;
+    margin-right: 5px;
+}
+
+.over-ball {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.over-ball.six {
+    background: #27ae60;
+    color: white;
+}
+
+.over-ball.four {
+    background: #3498db;
+    color: white;
+}
+
+.over-ball.wicket {
+    background: #e74c3c;
+    color: white;
+}
+
+.over-ball.dot {
+    background: rgba(255,255,255,0.3);
+    color: white;
+    border: 2px solid rgba(255,255,255,0.5);
+}
+
+.over-ball.one {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.4);
+}
+
+.result-bar {
+    background: rgba(0,0,0,0.3);
+    padding: 15px;
+    text-align: center;
+    margin-top: 30px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+/* Tabs */
+.tabs {
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-top: -1px;
+}
+
+.tabs-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    gap: 5px;
+    padding: 0 20px;
+    overflow-x: auto;
+}
+
+.tab {
+    padding: 15px 25px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    color: #666;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+
+.tab.active {
+    color: #0d2a5c;
+    border-bottom-color: #0d2a5c;
+}
+
+/* Content */
+.content {
+    max-width: 1400px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+.innings-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.innings-tab {
+    padding: 12px 30px;
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #666;
+    transition: all 0.3s;
+}
+
+.innings-tab.active {
+    background: #e74c3c;
+    color: white;
+    border-color: #e74c3c;
+}
+
+.scorecard {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    margin-bottom: 30px;
+}
+
+.innings-header {
+    padding: 20px 25px;
+    background: #f8f9fa;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #e9ecef;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.innings-team {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.innings-logo {
+    width: 50px;
+    height: 50px;
+    background: #e74c3c;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+}
+
+.innings-team h3 {
+    font-size: 22px;
+    margin-bottom: 5px;
+}
+
+.innings-score {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.batting-table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow-x: auto;
+    display: block;
+}
+
+.batting-table thead {
+    background: #f8f9fa;
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.batting-table tbody {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.batting-table th {
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+    color: #666;
+    text-transform: uppercase;
+}
+
+.batting-table td {
+    padding: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.batting-table tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.batting-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.player-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.player-avatar {
+    width: 40px;
+    height: 40px;
+    background: #3498db;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.player-name {
+    font-weight: 600;
+    color: #333;
+}
+
+.dismissal {
+    font-size: 12px;
+    color: #666;
+    margin-top: 3px;
+}
+
+.stat {
+    font-weight: 600;
+}
+
+.strike-rate {
+    color: #27ae60;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+    .hero {
+        padding: 30px 15px;
+    }
+
+    .match-header {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .team {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .team-score h2 {
+        font-size: 32px;
+    }
+
+    .team-score .overs {
+        font-size: 14px;
+    }
+
+    .team-logo {
+        width: 60px;
+        height: 60px;
+        font-size: 18px;
+    }
+
+    .match-status {
+        width: 100%;
+    }
+
+    .final-badge {
+        font-size: 12px;
+        padding: 6px 16px;
+    }
+
+    .match-info {
+        font-size: 12px;
+    }
+
+    .over-group {
+        gap: 5px;
+    }
+
+    .over-label {
+        font-size: 11px;
+    }
+
+    .over-ball {
+        width: 28px;
+        height: 28px;
+        font-size: 11px;
+    }
+
+    .result-bar {
+        font-size: 14px;
+        padding: 12px;
+    }
+
+    .tabs-container {
+        padding: 0 10px;
+    }
+
+    .tab {
+        padding: 12px 15px;
+        font-size: 12px;
+    }
+
+    .content {
+        padding: 0 10px;
+        margin: 20px auto;
+    }
+
+    .innings-tab {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+
+    .innings-header {
+        padding: 15px;
+    }
+
+    .innings-logo {
+        width: 40px;
+        height: 40px;
+        font-size: 14px;
+    }
+
+    .innings-team h3 {
+        font-size: 18px;
+    }
+
+    .innings-score {
+        font-size: 18px;
+    }
+
+    /* Mobile table styles */
+    .batting-table {
+        font-size: 11px;
+    }
+
+    .batting-table th,
+    .batting-table td {
+        padding: 8px 5px;
+    }
+
+    .batting-table th:first-child,
+    .batting-table td:first-child {
+        width: 45%;
+        min-width: 45%;
+    }
+
+    .batting-table th:not(:first-child),
+    .batting-table td:not(:first-child) {
+        width: 11%;
+        min-width: 11%;
+        text-align: center;
+    }
+
+    .player-info {
+        gap: 8px;
+    }
+
+    .player-avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 11px;
+    }
+
+    .player-name {
+        font-size: 12px;
+    }
+
+    .dismissal {
+        font-size: 10px;
+    }
+
+    .stat {
+        font-size: 12px;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+    .hero {
+        padding: 20px 10px;
+    }
+
+    .team-score h2 {
+        font-size: 28px;
+    }
+
+
+
+
+
+    .team-logo {
+        width: 50px;
+        height: 50px;
+        font-size: 16px;
+    }
+
+    .over-ball {
+        width: 24px;
+        height: 24px;
+        font-size: 10px;
+    }
+
+    .over-label {
+        font-size: 10px;
+    }
+
+    .batting-table {
+        font-size: 10px;
+    }
+
+    .batting-table th,
+    .batting-table td {
+        padding: 6px 3px;
+    }
+
+    .player-avatar {
+        width: 28px;
+        height: 28px;
+        font-size: 10px;
+    }
+
+    .player-name {
+        font-size: 11px;
+    }
+
+    .dismissal {
+        font-size: 9px;
+    }
+}
+
+/* Footer Styles */
+#footer-main {
+    background: linear-gradient(135deg, #11141C 0%, #1B1F2A 100%);
+    color: #fff;
+    width: 100%;
+    margin-top: 50px;
+}
+
+.footer-top {
+    padding: 50px 20px 30px 20px;
+    text-align: center;
+}
+
+.footer-heading {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: #f4f3f0;
+}
+
+.sponsor-logos {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    align-items: center;
+}
+
+.sponsor-block {
+    text-align: center;
+}
+
+.sponsor-title {
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    color: #b0b0b0;
+}
+
+.sponsor-logo {
+    max-width: 120px;
+    height: auto;
+}
+
+.footer-bottom {
+    background: rgba(0,0,0,0.2);
+    padding: 20px;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.footer-content p {
+    margin: 0;
+}
+
+.footer-links a {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 20px;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .footer-heading {
+        font-size: 1.4rem;
+    }
+
+    .sponsor-logos {
+        gap: 20px;
+    }
+
+    .sponsor-logo {
+        max-width: 100px;
+    }
+
+    .footer-content {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .footer-links a {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+
+    @media (max-width: 600px) {
+        /* 1. The key to horizontal scrolling */
+        .bowling-section {
+            overflow-x: auto; 
+            /* Adds a scrollbar when the content width exceeds the device width */
+            -webkit-overflow-scrolling: touch; /* Improves scrolling performance on iOS */
+        }
+    
+        /* 2. Ensure the tables are wide enough to trigger the scrollbar */
+        #pbks-bowler-scorecard,
+        #rcb-bowler-scorecard {
+            /* Setting a minimum width ensures the table doesn't shrink
+               and forces the 'overflow-x: auto' behavior. */
+            min-width: 550px; 
+        }
+    
+        /* 3. Optional: Make content more compact to fit a little more */
+        .bowling-section table th, 
+        .bowling-section table td {
+            padding: 8px 10px; /* Reduce cell padding */
+            font-size: 13px;
+            white-space: nowrap; /* Prevents text from wrapping within a cell */
+        }
+    }
+}

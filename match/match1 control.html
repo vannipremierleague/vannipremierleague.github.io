@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VPL Admin Panel – Live Match Control</title>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<style>
+/* Base Styles */
+body { 
+    font-family: 'Inter', Arial, sans-serif; 
+    padding: 20px; 
+    max-width: 850px; 
+    margin: 0 auto; /* Center the container */
+    background: #f0f2f5; 
+    color: #333;
+}
+h2, h3 { 
+    text-align: center; 
+    margin-bottom: 20px; 
+    color: #004d99;
+}
+.box { 
+    background: white; 
+    padding: 20px; 
+    border-radius: 12px; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+    margin-bottom: 30px; 
+    border-top: 5px solid #007bff;
+}
+label { 
+    font-weight: 600; 
+    margin-top: 10px; 
+    display: block; 
+    color: #555;
+}
+input, select { 
+    width: 100%; 
+    padding: 12px; 
+    margin: 5px 0 15px; 
+    border-radius: 8px; 
+    border: 1px solid #ccc; 
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+input:focus, select:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}
+button { 
+    width: 100%; 
+    padding: 14px; 
+    background: #28a745; 
+    color: white; 
+    border: none; 
+    border-radius: 8px; 
+    font-size: 16px; 
+    cursor: pointer; 
+    margin-top: 10px; 
+    transition: background 0.3s, transform 0.1s;
+    box-shadow: 0 4px #1e7e34;
+}
+button:hover { 
+    background: #218838; 
+}
+button:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px #1e7e34;
+}
+.update-team-btn {
+    background: #007bff;
+    box-shadow: 0 4px #0056b3;
+}
+.update-team-btn:hover {
+    background: #0069d9;
+}
+.update-team-btn:active {
+    box-shadow: 0 2px #0056b3;
+}
+.control-btn {
+    background: #ffc107;
+    color: #333;
+    box-shadow: 0 4px #d39e00;
+}
+.control-btn:hover {
+    background: #e0a800;
+}
+.control-btn:active {
+    box-shadow: 0 2px #d39e00;
+}
+
+.player-section { 
+    border: 1px solid #e0e0e0; 
+    padding: 15px; 
+    border-radius: 8px; 
+    margin-bottom: 20px; 
+    background: #fafafa;
+}
+
+/* Notification Box Styling */
+#notification-box {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 300px;
+    padding: 15px 25px;
+    background-color: #333;
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    opacity: 0;
+    transition: opacity 0.5s, transform 0.5s;
+    z-index: 1000;
+    text-align: center;
+}
+.notification-active {
+    opacity: 1 !important;
+    transform: translateX(-50%) translateY(0) !important;
+}
+
+/* Confirmation Modal Styling */
+#confirmation-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none; /* Hidden by default */
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    min-width: 300px;
+    max-width: 90%;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 20px;
+}
+.modal-actions button {
+    width: 48%;
+    padding: 10px;
+    margin: 0;
+}
+.modal-confirm {
+    background: #dc3545;
+    box-shadow: 0 4px #a71d2a;
+}
+.modal-confirm:hover {
+    background: #c82333;
+}
+.modal-cancel {
+    background: #6c757d;
+    box-shadow: 0 4px #545b62;
+}
+.modal-cancel:hover {
+    background: #5a6268;
+}
+</style>
+</head>
+<body>
+
+<div id="notification-box"></div>
+
+<div id="confirmation-modal">
+    <div class="modal-content">
+        <p id="confirmation-message">Are you sure you want to perform this action?</p>
+        <div class="modal-actions">
+            <button id="modal-confirm-btn" class="modal-confirm">Confirm</button>
+            <button id="modal-cancel-btn" class="modal-cancel">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div class="box">
+    <h2>VPL Scoreboard Admin</h2>
+
+    <label>Match Status:</label>
+    <select id="match-status">
+        <option value="LIVE">LIVE</option>
+        <option value="FINAL">FINAL</option>
+        <option value="INNINGS BREAK">INNINGS BREAK</option>
+    </select>
+
+    <h3>Team Scores</h3>
+    <label>Team1 Score (e.g., 120/3):</label>
+    <input type="text" id="rcb-score" placeholder="e.g., 120/3">
+
+    <label>Team1 Overs (e.g., 12.4):</label>
+    <input type="text" id="rcb-overs" placeholder="e.g., 12.4">
+
+    <label>Team1 Score (e.g., 110/5):</label>
+    <input type="text" id="pbks-score" placeholder="e.g., 110/5">
+
+    <label>Team2 Overs (e.g., 11.3):</label>
+    <input type="text" id="pbks-overs" placeholder="e.g., 11.3">
+
+    <button onclick="updateTeam()" class="update-team-btn">Update Team Scores</button>
+</div>
+
+<div class="box">
+    <h3>Live Match Control (Striker/Bowler)</h3>
+    <p>Select the players currently batting and bowling to enable automatic ball-by-ball updates.</p>
+
+    <label>Batting Team:</label>
+    <select id="batting-team-select">
+        <option value="rcb">Team1</option>
+        <option value="pbks">Team2</option>
+    </select>
+    
+    <label>Current Striker:</label>
+    <select id="striker-key" class="player-select">
+        <option value="" disabled>Select Striker</option>
+    </select>
+
+    <label>Current Non-Striker:</label>
+    <select id="non-striker-key" class="player-select">
+        <option value="" disabled>Select Non-Striker</option>
+    </select>
+
+    <label>Current Bowler (Opponent Team):</label>
+    <select id="bowler-key" class="bowler-select">
+        <option value="" disabled>Select Bowler</option>
+    </select>
+
+    <button onclick="updateLivePlayers()" class="control-btn">Set Live Players</button>
+</div>
+
+<div class="box">
+    <h3>Live Ball-by-Ball Score Update</h3>
+    <p>The selected score will be applied to the **Striker**, **Bowler**, and **Team Total**.</p>
+    
+    <label>Live Score Type:</label>
+    <select id="score-type">
+        <option value="1">1 Run</option>
+        <option value="2">2 Runs</option>
+        <option value="3">3 Runs</option>
+        <option value="4">4 Runs</option>
+        <option value="6">6 Runs</option>
+        <option value="0">Dot Ball (0 Runs)</option>
+        <option value="W">Wicket (Dismissal)</option>
+        <option value="WD">Wide (1 Run Extra)</option>
+        <option value="NB">No Ball (1 Run Extra)</option>
+        <option value="LB">Leg Bye</option>
+        <option value="B">Bye</option>
+    </select>
+
+    <label>Extra Runs (Applies to LB/B/WD/NB in addition to base extra run):</label>
+    <input type="number" id="extra-runs" value="0" min="0">
+
+    <button onclick="updateLiveScore()" class="update-team-btn">Update Live Score</button>
+    <button onclick="undoLastBall()" class="modal-cancel">Undo Last Ball</button>
+</div>
+
+<div class="box">
+    <h3>RCB Players (Batting/Dismissed)</h3>
+    <div id="rcb-players"></div>
+    <button onclick="addRCBPlayer()">Add RCBTeam1 Player</button>
+</div>
+
+<div class="box">
+    <h3>PBKS Players (Batting/Dismissed)</h3>
+    <div id="pbks-players"></div>
+    <button onclick="addPBKSPlayer()">Add Team2 Player</button>
+</div>
+
+<div class="box">
+    <h3>RCB Bowlers Scorecard (Persistent Data)</h3>
+    <div id="rcb-bowlers-scorecard">
+        </div>
+    <button onclick="addBowlerToScorecard('rcb_bowlers')">Add Team1 Bowler to Scorecard</button>
+</div>
+
+<div class="box">
+    <h3>PBKS Bowlers Scorecard (Persistent Data)</h3>
+    <div id="pbks-bowlers-scorecard">
+        </div>
+    <button onclick="addBowlerToScorecard('pbks_bowlers')">Add Team2 Bowler to Scorecard</button>
+</div>
+
+<script>
+// IMPORTANT: Replace with your actual Firebase config
+const firebaseConfig = {
+    apiKey: "AIzaSyAgRNYcERmBBYfQcXF0PQA5P-Ifqo6O3to",
+    authDomain: "vpl2025-71c32.firebaseapp.com",
+    databaseURL: "https://vpl2025-71c32-default-rtdb.firebaseio.com/",
+    projectId: "vpl2025-71c32",
+    storageBucket: "vpl2025-71c32.firebasestorage.app",
+    messagingSenderId: "239331513898",
+    appId: "1:239331513898:web:1b0179c03591f6de7a1553"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const matchRef = db.ref("vpl2025/match1");
+
+let globalPlayerData = {}; // Store player data globally for lookups
+let globalBowlerData = {}; // Store bowler data globally for lookups
+
+// --- UTILITY FUNCTIONS (Custom Alert/Confirm) ---
+
+function showMessage(message) {
+    const box = document.getElementById("notification-box");
+    box.textContent = message;
+    box.classList.add("notification-active");
+    setTimeout(() => {
+        box.classList.remove("notification-active");
+    }, 3000);
+}
+
+function showConfirmation(message, onConfirm) {
+    const modal = document.getElementById('confirmation-modal');
+    const msgElement = document.getElementById('confirmation-message');
+    const confirmBtn = document.getElementById('modal-confirm-btn');
+    const cancelBtn = document.getElementById('modal-cancel-btn');
+
+    msgElement.textContent = message;
+    modal.style.display = 'flex'; 
+
+    confirmBtn.onclick = null;
+    cancelBtn.onclick = null;
+
+    confirmBtn.onclick = () => {
+        modal.style.display = 'none';
+        onConfirm();
+    };
+
+    cancelBtn.onclick = () => {
+        modal.style.display = 'none';
+    };
+}
+
+// Function to convert overs from X.Y to total balls (for calculation)
+function oversToBalls(oversStr) {
+    const [main, balls] = oversStr.split('.');
+    return (Number(main) * 6) + Number(balls || 0);
+}
+
+// Function to convert total balls to overs in X.Y format (for display)
+function ballsToOvers(totalBalls) {
+    const overs = Math.floor(totalBalls / 6);
+    const balls = totalBalls % 6;
+    return `${overs}.${balls}`;
+}
+
+function calculateSR(runs, balls) {
+    return balls > 0 ? ((runs / balls) * 100).toFixed(2) : '0.00';
+}
+
+// --- LIVE PLAYER CONTROL FUNCTIONS ---
+
+function updateLivePlayers() {
+    const strikerKey = document.getElementById("striker-key").value;
+    const nonStrikerKey = document.getElementById("non-striker-key").value;
+    const bowlerKey = document.getElementById("bowler-key").value;
+    const battingTeam = document.getElementById("batting-team-select").value;
+
+    if (!strikerKey || !nonStrikerKey || !bowlerKey) {
+        showMessage("Please select Striker, Non-Striker, and Bowler.");
+        return;
+    }
+
+    const updates = {
+        strikerKey,
+        nonStrikerKey,
+        bowlerKey,
+        battingTeam
+    };
+
+    matchRef.child("livePlayers").set(updates)
+        .then(() => {
+            showMessage("Live players set successfully!");
+        })
+        .catch(error => {
+            showMessage("Error setting live players: " + error.message);
+        });
+}
+
+// --- LIVE SCORING FUNCTIONS (UPDATED) ---
+
+function updateLiveScore() {
+    const scoreType = document.getElementById("score-type").value;
+    const extraRuns = Number(document.getElementById("extra-runs").value);
+
+    // 1. Get Live Player Keys - using let instead of const
+    let currentStrikerKey = document.getElementById("striker-key").value;
+    let currentNonStrikerKey = document.getElementById("non-striker-key").value;
+    const bowlerKey = document.getElementById("bowler-key").value;
+    const battingTeam = document.getElementById("batting-team-select").value;
+    const bowlingTeam = battingTeam === 'rcb' ? 'pbks' : 'rcb';
+    const bowlerTeamKey = `${bowlingTeam}_bowlers`;
+
+    if (!currentStrikerKey || !currentNonStrikerKey || !bowlerKey) {
+        showMessage("Live players are not set. Please use 'Set Live Players' first.");
+        return;
+    }
+
+    // 2. Get the current score data and player/bowler data atomically
+    matchRef.once('value')
+        .then(snapshot => {
+            const data = snapshot.val();
+            if (!data) throw new Error("Match data not found.");
+
+            // Determine which team's score/overs to update
+            const teamScoreKey = `${battingTeam}Score`;
+            const teamOversKey = `${battingTeam}Overs`;
+
+            // Player data paths
+            const playerPath = `${battingTeam}Players/${currentStrikerKey}`;
+            const nonStrikerPath = `${battingTeam}Players/${currentNonStrikerKey}`;
+            const bowlerPath = `${bowlerTeamKey}/${bowlerKey}`;
+
+            // --- Initial State ---
+            const currentScoreStr = data[teamScoreKey] || "0/0";
+            const currentOversStr = data[teamOversKey] || "0.0";
+            
+            // Parse score safely
+            const scoreParts = currentScoreStr.split('/');
+            let currentRuns = parseInt(scoreParts[0]) || 0;
+            let currentWickets = parseInt(scoreParts[1]) || 0;
+            let totalBalls = oversToBalls(currentOversStr);
+            
+            console.log("Initial state:", {currentScoreStr, currentRuns, currentWickets, currentOversStr, totalBalls});
+            
+            // Get player and bowler data safely
+            const battingPlayersData = data[battingTeam + 'Players'] || {};
+            const bowlingTeamData = data[bowlerTeamKey] || {};
+            
+            let strikerData = battingPlayersData[currentStrikerKey] 
+                ? JSON.parse(JSON.stringify(battingPlayersData[currentStrikerKey]))
+                : {runs: 0, balls: 0, fours: 0, sixes: 0, sr: '0.00'};
+            
+            let bowlerData = bowlingTeamData[bowlerKey] 
+                ? JSON.parse(JSON.stringify(bowlingTeamData[bowlerKey]))
+                : {overs: '0.0', maidens: 0, runsConceded: 0, wickets: 0};
+            
+            console.log("Player/Bowler data loaded:", {strikerData, bowlerData});
+            
+            let bowlerTotalBalls = oversToBalls(bowlerData.overs);
+
+            // --- Score Calculation Variables ---
+            let runsScored = 0; // Total runs added to team score
+            let batsmanRuns = 0; // Runs added to striker
+            let ballsDelivered = 0; // Counts towards the over (1-6)
+            let wicketsLost = 0;
+            let rotate = false; // Strike rotation flag
+
+            const legitimateRuns = ['0', '1', '2', '3', '4', '6'].includes(scoreType);
+            const isExtra = ['WD', 'NB', 'LB', 'B'].includes(scoreType);
+            const isBallCounted = isExtra ? (scoreType !== 'WD' && scoreType !== 'NB') : true;
+
+            // 3. Calculate increments
+            if (scoreType === 'W') {
+                wicketsLost = 1;
+                ballsDelivered = 1;
+                rotate = false; 
+            } else if (legitimateRuns) {
+                runsScored = Number(scoreType);
+                batsmanRuns = runsScored;
+                ballsDelivered = 1;
+                rotate = runsScored % 2 !== 0;
+
+                if (runsScored === 4) strikerData.fours++;
+                if (runsScored === 6) strikerData.sixes++;
+
+            } else if (scoreType === 'WD' || scoreType === 'NB') {
+                // Wide/No-Ball: 1 run for the extra + extraRuns from input. Ball is NOT counted.
+                runsScored = 1 + extraRuns;
+                ballsDelivered = 0; // Does not count toward the 6-ball over
+                bowlerData.runsConceded += runsScored; // Bowler concedes all extra runs
+                rotate = runsScored % 2 !== 0;
+
+                if (scoreType === 'NB' && extraRuns > 0) {
+                    batsmanRuns = extraRuns; // If No Ball + runs, runs go to batsman
+                } else {
+                    batsmanRuns = 0; 
+                }
+                
+            } else if (scoreType === 'LB' || scoreType === 'B') {
+                // Leg Bye/Bye: Runs go to team total only. Ball IS counted.
+                runsScored = extraRuns;
+                ballsDelivered = 1;
+                batsmanRuns = 0;
+                bowlerData.runsConceded += runsScored; // Bowler concedes all bye/leg-bye runs
+                rotate = runsScored % 2 !== 0;
+            } else {
+                // Default legitimate runs (should be covered by legitimateRuns check, but for safety)
+                runsScored = Number(scoreType);
+                batsmanRuns = runsScored;
+                ballsDelivered = 1;
+                rotate = runsScored % 2 !== 0;
+            }
+
+            // Update Team Totals
+            currentRuns = parseInt(currentRuns) + parseInt(runsScored);
+            currentWickets = parseInt(currentWickets) + parseInt(wicketsLost);
+            totalBalls = parseInt(totalBalls) + parseInt(ballsDelivered);
+            
+            console.log("Updated totals:", {currentRuns, currentWickets, totalBalls, runsScored, wicketsLost, ballsDelivered});
+
+            // Update Bowler Stats
+            if (isBallCounted) {
+                bowlerTotalBalls += 1;
+            }
+            if (legitimateRuns) {
+                bowlerData.runsConceded += runsScored;
+            }
+            bowlerData.wickets += wicketsLost;
+            
+            bowlerData.overs = ballsToOvers(bowlerTotalBalls);
+
+            // Update Striker Stats
+            strikerData.runs += batsmanRuns;
+            strikerData.balls += ballsDelivered;
+            strikerData.sr = calculateSR(strikerData.runs, strikerData.balls);
+            
+            // 4. Handle Strike Rotation (End of over or odd runs)
+            const isEndOfOver = (totalBalls % 6 === 0) && (totalBalls > 0) && ballsDelivered === 1;
+
+            // Store original keys and non-striker data for undo functionality
+            const originalStrikerKey = currentStrikerKey;
+            const originalNonStrikerKey = currentNonStrikerKey;
+            let nonStrikerData = battingPlayersData[currentNonStrikerKey] 
+                ? JSON.parse(JSON.stringify(battingPlayersData[currentNonStrikerKey]))
+                : {runs: 0, balls: 0, fours: 0, sixes: 0, sr: '0.00'};
+
+            if (rotate || isEndOfOver) {
+                // Swap the striker and non-striker
+                const temp = currentStrikerKey;
+                currentStrikerKey = currentNonStrikerKey;
+                currentNonStrikerKey = temp;
+                console.log("Strike rotated:", {currentStrikerKey, currentNonStrikerKey});
+            }
+            
+            console.log("Final score to update:", `${currentRuns}/${currentWickets}`);
+            
+            // 5. Prepare the multi-path update object
+            const updates = {
+                // Team Totals
+                [teamScoreKey]: `${currentRuns}/${currentWickets}`,
+                [teamOversKey]: ballsToOvers(totalBalls),
+
+                // Striker/Non-Striker Player Data
+                [playerPath]: strikerData,
+                [nonStrikerPath]: nonStrikerData,
+
+                // Bowler Scorecard Data
+                [bowlerPath]: bowlerData,
+                
+                // Live Player Keys & Strike Rotation
+                'livePlayers/strikerKey': currentStrikerKey,
+                'livePlayers/nonStrikerKey': currentNonStrikerKey,
+                'livePlayers/battingTeam': battingTeam,
+                
+                // New field to store the last ball for undo
+                lastBall: {
+                    battingTeam,
+                    teamScoreKey, teamOversKey,
+                    playerPath, nonStrikerPath, bowlerPath,
+                    prevScoreStr: currentScoreStr,
+                    prevOversStr: currentOversStr,
+                    prevStrikerData: battingPlayersData[originalStrikerKey] 
+                        ? battingPlayersData[originalStrikerKey]
+                        : {runs: 0, balls: 0, fours: 0, sixes: 0, sr: '0.00'},
+                    prevNonStrikerData: battingPlayersData[originalNonStrikerKey] 
+                        ? battingPlayersData[originalNonStrikerKey]
+                        : {runs: 0, balls: 0, fours: 0, sixes: 0, sr: '0.00'},
+                    prevBowlerData: bowlingTeamData[bowlerKey] 
+                        ? bowlingTeamData[bowlerKey]
+                        : {overs: '0.0', maidens: 0, runsConceded: 0, wickets: 0},
+                    prevStrikerKey: data.livePlayers ? data.livePlayers.strikerKey : '',
+                    prevNonStrikerKey: data.livePlayers ? data.livePlayers.nonStrikerKey : '',
+                }
+            };
+            
+            // 6. Update Firebase
+            return matchRef.update(updates);
+        })
+        .then(() => {
+            showMessage("Live Score updated successfully! Strike rotation applied.");
+            document.getElementById("extra-runs").value = 0; // Reset extra runs
+        })
+        .catch(error => {
+            showMessage("Error updating live score: " + error.message);
+            console.error(error);
+        });
+}
+
+function undoLastBall() {
+    showConfirmation("Are you sure you want to UNDO the last ball? This action cannot be reversed.", () => {
+        matchRef.once('value')
+            .then(snapshot => {
+                const data = snapshot.val();
+                if (!data || !data.lastBall) throw new Error("No last ball data found to undo.");
+
+                const lastBall = data.lastBall;
+
+                // Restore previous state
+                const updates = {
+                    // Team Totals
+                    [lastBall.teamScoreKey]: lastBall.prevScoreStr,
+                    [lastBall.teamOversKey]: lastBall.prevOversStr,
+
+                    // Player Stats (Striker/Non-Striker)
+                    [lastBall.playerPath]: lastBall.prevStrikerData,
+                    [lastBall.nonStrikerPath]: lastBall.prevNonStrikerData,
+
+                    // Bowler Stats
+                    [lastBall.bowlerPath]: lastBall.prevBowlerData,
+                    
+                    // Live Players (to restore strike state)
+                    'livePlayers/strikerKey': lastBall.prevStrikerKey,
+                    'livePlayers/nonStrikerKey': lastBall.prevNonStrikerKey,
+
+                    // Remove the lastBall record after undoing
+                    lastBall: null 
+                };
+
+                return matchRef.update(updates);
+            })
+            .then(() => {
+                showMessage("Last ball undone successfully!");
+            })
+            .catch(error => {
+                showMessage("Error undoing last ball: " + error.message);
+                console.error(error);
+            });
+    });
+}
+
+// --- TEAM SCORE FUNCTIONS ---
+
+function updateTeam() {
+    const rcbScore = document.getElementById("rcb-score").value;
+    const rcbOvers = document.getElementById("rcb-overs").value;
+    const pbksScore = document.getElementById("pbks-score").value;
+    const pbksOvers = document.getElementById("pbks-overs").value;
+    const status = document.getElementById("match-status").value;
+
+    matchRef.update({
+        rcbScore, rcbOvers, pbksScore, pbksOvers, status
+    })
+    .then(() => {
+        showMessage("Team scores updated!");
+    })
+    .catch(error => {
+        showMessage("Error updating team scores: " + error.message);
+    });
+}
+
+// --- PLAYER FUNCTIONS (Batters) ---
+
+function createPlayerInput(team, playerKey, playerData) {
+    const div = document.createElement("div");
+    div.className = "player-section";
+    div.id = `${team}-${playerKey}`;
+
+    div.innerHTML = `
+        <label>Player Name:</label>
+        <input type="text" placeholder="Name" value="${playerData.name || ''}" class="player-name">
+        <label>Runs:</label>
+        <input type="number" placeholder="Runs" value="${playerData.runs || 0}" class="player-runs">
+        <label>Balls:</label>
+        <input type="number" placeholder="Balls" value="${playerData.balls || 0}" class="player-balls">
+        <label>4s:</label>
+        <input type="number" placeholder="Fours" value="${playerData.fours || 0}" class="player-fours">
+        <label>6s:</label>
+        <input type="number" placeholder="Sixes" value="${playerData.sixes || 0}" class="player-sixes">
+        <label>Strike Rate:</label>
+        <input type="text" placeholder="SR (Calculated)" value="${playerData.sr || calculateSR(playerData.runs || 0, playerData.balls || 0)}" class="player-sr" readonly>
+        <button onclick="savePlayer('${team}','${playerKey}')">Save Player</button>
+        <button onclick="requestRemovePlayer('${team}','${playerKey}')" class="modal-confirm">Remove Player</button>
+    `;
+
+    const runsInput = div.querySelector(".player-runs");
+    const ballsInput = div.querySelector(".player-balls");
+    const srInput = div.querySelector(".player-sr");
+
+    const updateSR = () => {
+        const runs = Number(runsInput.value);
+        const balls = Number(ballsInput.value);
+        srInput.value = calculateSR(runs, balls);
+    };
+    runsInput.addEventListener('input', updateSR);
+    ballsInput.addEventListener('input', updateSR);
+    
+    return div;
+}
+
+function addRCBPlayer() {
+    const newKey = matchRef.child("rcbPlayers").push().key;
+    const container = document.getElementById("rcb-players");
+    container.appendChild(createPlayerInput("rcbPlayers", newKey, {}));
+}
+function addPBKSPlayer() {
+    const newKey = matchRef.child("pbksPlayers").push().key;
+    const container = document.getElementById("pbks-players");
+    container.appendChild(createPlayerInput("pbksPlayers", newKey, {}));
+}
+
+function savePlayer(team, key) {
+    const div = document.getElementById(`${team}-${key}`);
+    const player = {
+        name: div.querySelector(".player-name").value,
+        runs: Number(div.querySelector(".player-runs").value),
+        balls: Number(div.querySelector(".player-balls").value),
+        fours: Number(div.querySelector(".player-fours").value),
+        sixes: Number(div.querySelector(".player-sixes").value),
+        sr: div.querySelector(".player-sr").value
+    };
+    
+    matchRef.child(team).child(key).set(player)
+        .then(() => {
+            showMessage(`Player ${player.name} saved!`);
+        })
+        .catch(error => {
+            showMessage("Error saving player: " + error.message);
+        });
+}
+
+function requestRemovePlayer(team, key) {
+    showConfirmation("Are you sure you want to permanently remove this player?", () => {
+        removePlayer(team, key);
+    });
+}
+
+function removePlayer(team, key) {
+    matchRef.child(team).child(key).remove()
+        .then(() => {
+            const element = document.getElementById(`${team}-${key}`);
+            if(element) element.remove();
+            showMessage("Player removed successfully!");
+        })
+        .catch(error => {
+            showMessage("Error removing player: " + error.message);
+        });
+}
+
+// --- BOWLER SCORECARD FUNCTIONS ---
+
+function createBowlerInput(team, bowlerKey, bowlerData) {
+    const div = document.createElement("div");
+    div.className = "player-section";
+    div.id = `${team}-${bowlerKey}`; 
+
+    div.innerHTML = `
+        <label>Bowler Name:</label>
+        <input type="text" placeholder="Name" value="${bowlerData.name || ''}" class="bowler-name">
+        <label>Overs (X.Y):</label>
+        <input type="text" placeholder="e.g., 4.0 or 3.2" value="${bowlerData.overs || '0.0'}" class="bowler-overs">
+        <label>Maidens:</label>
+        <input type="number" placeholder="Maidens" value="${bowlerData.maidens || 0}" class="bowler-maidens">
+        <label>Runs Conceded:</label>
+        <input type="number" placeholder="Runs" value="${bowlerData.runsConceded || 0}" class="bowler-runsConceded">
+        <label>Wickets:</label>
+        <input type="number" placeholder="Wickets" value="${bowlerData.wickets || 0}" class="bowler-wickets">
+        <button onclick="saveBowler('${team}','${bowlerKey}')">Save Bowler</button>
+        <button onclick="requestRemoveBowler('${team}','${bowlerKey}')" class="modal-confirm">Remove Bowler</button>
+    `;
+    return div;
+}
+
+function addBowlerToScorecard(team) {
+    // Pushes a new entry to the respective bowling array (rcb_bowlers or pbks_bowlers)
+    const newKey = matchRef.child(team).push().key; 
+    const containerId = team.includes('rcb') ? "rcb-bowlers-scorecard" : "pbks-bowlers-scorecard";
+    const container = document.getElementById(containerId);
+    container.appendChild(createBowlerInput(team, newKey, {}));
+    showMessage(`New bowler added for ${team.toUpperCase().replace('_BOWLERS', '')}`);
+}
+
+function saveBowler(team, key) {
+    const div = document.getElementById(`${team}-${key}`);
+    const bowler = {
+        name: div.querySelector(".bowler-name").value,
+        overs: div.querySelector(".bowler-overs").value,
+        maidens: Number(div.querySelector(".bowler-maidens").value),
+        runsConceded: Number(div.querySelector(".bowler-runsConceded").value),
+        wickets: Number(div.querySelector(".bowler-wickets").value)
+    };
+    
+    matchRef.child(team).child(key).set(bowler)
+        .then(() => {
+            showMessage(`Bowler ${bowler.name} stats saved!`);
+        })
+        .catch(error => {
+            showMessage("Error saving bowler: " + error.message);
+        });
+}
+
+function requestRemoveBowler(team, key) {
+    showConfirmation("Are you sure you want to permanently remove this bowler from the scorecard?", () => {
+        removeBowler(team, key);
+    });
+}
+
+function removeBowler(team, key) {
+    matchRef.child(team).child(key).remove()
+        .then(() => {
+            const element = document.getElementById(`${team}-${key}`);
+            if(element) element.remove();
+            showMessage("Bowler removed successfully!");
+        })
+        .catch(error => {
+            showMessage("Error removing bowler: " + error.message);
+        });
+}
+
+// --- POPULATE LIVE PLAYER SELECTORS ---
+
+function populateLiveSelectors(data) {
+    const strikerSelect = document.getElementById("striker-key");
+    const nonStrikerSelect = document.getElementById("non-striker-key");
+    const bowlerSelect = document.getElementById("bowler-key");
+    const battingTeamSelect = document.getElementById("batting-team-select");
+
+    // Get the current batting team from the dropdown
+    const battingTeam = battingTeamSelect.value;
+    const bowlingTeam = battingTeam === 'rcb' ? 'pbks' : 'rcb';
+    
+    console.log("Populating selectors for batting team:", battingTeam, "bowling team:", bowlingTeam);
+
+    // Clear existing options, but keep the default disabled one
+    strikerSelect.innerHTML = '<option value="" disabled selected>Select Striker</option>';
+    nonStrikerSelect.innerHTML = '<option value="" disabled selected>Select Non-Striker</option>';
+    bowlerSelect.innerHTML = '<option value="" disabled selected>Select Bowler</option>';
+
+    // 1. Populate Batters (Striker/Non-Striker)
+    const battingPlayersKey = `${battingTeam}Players`;
+    const battingPlayers = data[battingPlayersKey] || {};
+    globalPlayerData = {};
+    
+    console.log("Batting players data:", battingPlayers);
+
+    Object.keys(battingPlayers).forEach(key => {
+        const player = battingPlayers[key];
+        if (player && player.name) {
+            globalPlayerData[key] = player;
+            const displayText = `${player.name} (${player.runs || 0}/${player.balls || 0})`;
+            const option1 = new Option(displayText, key);
+            const option2 = new Option(displayText, key);
+            strikerSelect.add(option1);
+            nonStrikerSelect.add(option2);
+        }
+    });
+
+    // 2. Populate Bowlers
+    const bowlingBowlersKey = `${bowlingTeam}_bowlers`;
+    const bowlingBowlers = data[bowlingBowlersKey] || {};
+    globalBowlerData = {};
+    
+    console.log("Bowling bowlers data:", bowlingBowlers);
+
+    Object.keys(bowlingBowlers).forEach(key => {
+        const bowler = bowlingBowlers[key];
+        if (bowler && bowler.name) {
+            globalBowlerData[key] = bowler;
+            const displayText = `${bowler.name} (${bowler.overs || '0.0'} ovs)`;
+            const option = new Option(displayText, key);
+            bowlerSelect.add(option);
+        }
+    });
+
+    // 3. Set currently selected players from Firebase (only if they exist in current team)
+    const livePlayers = data.livePlayers || {};
+    
+    // Only restore selections if the batting team matches
+    if (livePlayers.battingTeam === battingTeam) {
+        if (livePlayers.strikerKey && globalPlayerData[livePlayers.strikerKey]) {
+            strikerSelect.value = livePlayers.strikerKey;
+        }
+        if (livePlayers.nonStrikerKey && globalPlayerData[livePlayers.nonStrikerKey]) {
+            nonStrikerSelect.value = livePlayers.nonStrikerKey;
+        }
+        if (livePlayers.bowlerKey && globalBowlerData[livePlayers.bowlerKey]) {
+            bowlerSelect.value = livePlayers.bowlerKey;
+        }
+    }
+    
+    console.log("Selectors populated. Striker options:", strikerSelect.options.length, "Bowler options:", bowlerSelect.options.length);
+}
+
+// Listener to re-populate selectors when batting team changes (moved outside realtime listener)
+let battingTeamChangeListener = null;
+
+function setupBattingTeamListener() {
+    const battingTeamSelect = document.getElementById("batting-team-select");
+    
+    // Remove old listener if exists
+    if (battingTeamChangeListener) {
+        battingTeamSelect.removeEventListener('change', battingTeamChangeListener);
+    }
+    
+    battingTeamChangeListener = function(e) {
+        const newBattingTeam = e.target.value;
+        console.log("Batting team changed to:", newBattingTeam);
+        
+        matchRef.once('value')
+        .then(snapshot => {
+            const data = snapshot.val();
+            populateLiveSelectors(data);
+            
+            // Clear the current selections in the UI
+            document.getElementById("striker-key").value = "";
+            document.getElementById("non-striker-key").value = "";
+            document.getElementById("bowler-key").value = "";
+            
+            showMessage(`Batting team changed to ${newBattingTeam.toUpperCase()}. Please select new players.`);
+        })
+        .catch(error => {
+            showMessage("Error changing batting team: " + error.message);
+        });
+    };
+    
+    battingTeamSelect.addEventListener('change', battingTeamChangeListener);
+}
+
+// Call this once on page load
+setupBattingTeamListener();
+
+
+// --- REALTIME DATA LISTENER (UPDATED) ---
+
+matchRef.on("value", snapshot => {
+    const data = snapshot.val();
+    if(!data) return;
+
+    // 1. Load Team Totals
+    document.getElementById("rcb-score").value = data.rcbScore || "";
+    document.getElementById("rcb-overs").value = data.rcbOvers || "";
+    document.getElementById("pbks-score").value = data.pbksScore || "";
+    document.getElementById("pbks-overs").value = data.pbksOvers || "";
+    document.getElementById("match-status").value = data.status || "LIVE";
+    
+    // 2. Load and Populate Live Player Selectors (MUST RUN FIRST)
+    populateLiveSelectors(data);
+
+    // 3. Load Batsmen Data (RCB)
+    const rcbContainer = document.getElementById("rcb-players");
+    rcbContainer.innerHTML = "";
+    if(data.rcbPlayers){
+        Object.keys(data.rcbPlayers).forEach(key=>{
+            rcbContainer.appendChild(createPlayerInput("rcbPlayers", key, data.rcbPlayers[key]));
+        });
+    }
+
+    // 4. Load Batsmen Data (PBKS)
+    const pbksContainer = document.getElementById("pbks-players");
+    pbksContainer.innerHTML = "";
+    if(data.pbksPlayers){
+        Object.keys(data.pbksPlayers).forEach(key=>{
+            pbksContainer.appendChild(createPlayerInput("pbksPlayers", key, data.pbksPlayers[key]));
+        });
+    }
+
+    // 5. Load Bowlers Scorecard Data (RCB)
+    const rcbBowlersContainer = document.getElementById("rcb-bowlers-scorecard");
+    rcbBowlersContainer.innerHTML = "";
+    if(data.rcb_bowlers){
+        Object.keys(data.rcb_bowlers).forEach(key=>{
+            rcbBowlersContainer.appendChild(createBowlerInput("rcb_bowlers", key, data.rcb_bowlers[key]));
+        });
+    }
+
+    // 6. Load Bowlers Scorecard Data (PBKS)
+    const pbksBowlersContainer = document.getElementById("pbks-bowlers-scorecard");
+    pbksBowlersContainer.innerHTML = "";
+    if(data.pbks_bowlers){
+        Object.keys(data.pbks_bowlers).forEach(key=>{
+            pbksBowlersContainer.appendChild(createBowlerInput("pbks_bowlers", key, data.pbks_bowlers[key]));
+        });
+    }
+});
+</script>
+</body>
+</html>

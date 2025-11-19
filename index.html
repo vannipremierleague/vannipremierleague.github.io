@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title id="page_title" data-page-title="vpl 2025 Match Results | Dummy Scorecard & Summaries">vpl 2025 Match Results | Dummy Scorecard & Summaries | IPLT20</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=3.0">
+    <meta name="theme-color" content="#19398a">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://www.iplt20.com/assets/css/ipl-style.min.css">
+    <link rel="stylesheet" href="https://www.www.iplt20.com/assets/css/font-awesome.min.css">
+    
+    <style>
+        /* --- Default Desktop Styles --- */
+        
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .match-timeline-container {
+            max-width: 900px;
+            margin: auto;
+            background-color: white;
+            padding: 30px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .timeline-item {
+            display: flex;
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .timeline-label {
+            width: 20%;
+            padding-right: 20px;
+            text-align: right;
+            position: relative;
+            z-index: 10;
+        }
+        .timeline-content {
+            width: 80%;
+            padding-left: 20px;
+        }
+        .timeline-label::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 2px;
+            height: 100%;
+            background: #e0e0e0;
+            z-index: 5;
+        }
+        .timeline-dot {
+            position: absolute;
+            top: 0;
+            right: -6px;
+            width: 14px;
+            height: 14px;
+            background-color: white;
+            border: 2px solid #0143a5;
+            border-radius: 50%;
+            z-index: 10;
+        }
+        .timeline-dot.green {
+            border-color: #008000;
+        }
+
+        .match-stage-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #0143a5;
+            border: 1px solid #0143a5;
+            border-radius: 4px;
+            background-color: white;
+        }
+        .match-stage-tag.final {
+            color: #008000;
+            border-color: #008000;
+        }
+
+        .result-text-box {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #19398a;
+            margin-top: 15px;
+            line-height: 1.2;
+        }
+
+        .final-match-detail {
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #fdfdfd;
+        }
+
+        .venue-time {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+
+        .team-info {
+            display: flex;
+            align-items: center;
+            width: 35%;
+        }
+        .team-logo {
+            width: 30px;
+            height: 30px;
+            margin-right: 8px;
+        }
+        .team-name {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        .score-info {
+            font-size: 1rem;
+            text-align: left;
+        }
+        .score-runs {
+            font-weight: bold;
+            display: block;
+        }
+        .score-overs {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        .vs-text {
+            width: 10%;
+            text-align: center;
+            font-weight: bold;
+            color: #adb5bd;
+            font-size: 1.5rem;
+        }
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            width: 30%;
+            justify-content: flex-end;
+        }
+        .action-icon {
+            background-color: #f1f1f1;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            color: #6c757d;
+        }
+        .match-centre-btn {
+            background-color: #f04e23;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-decoration: none;
+            text-align: center;
+            line-height: 1;
+        }
+
+        /* Mobile Navigation Styles */
+        .mobile-menu-toggle {
+            display: none;
+            background: #19398a;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            z-index: 1001;
+            width: 40px;
+            height: 40px;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .mobile-menu-toggle .dot-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+            width: 24px;
+            height: 24px;
+        }
+        
+        .mobile-menu-toggle .dot {
+            width: 6px;
+            height: 6px;
+            background-color: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+        
+        .mobile-menu-toggle.active .dot:nth-child(1),
+        .mobile-menu-toggle.active .dot:nth-child(3),
+        .mobile-menu-toggle.active .dot:nth-child(7),
+        .mobile-menu-toggle.active .dot:nth-child(9) {
+            opacity: 0;
+        }
+        
+        .mobile-menu-toggle.active .dot:nth-child(2),
+        .mobile-menu-toggle.active .dot:nth-child(4),
+        .mobile-menu-toggle.active .dot:nth-child(6),
+        .mobile-menu-toggle.active .dot:nth-child(8) {
+            transform: scale(1.3);
+        }
+        
+        .mobile-menu-toggle.active .dot:nth-child(5) {
+            transform: scale(1.5);
+        }
+        
+        .mobile-nav-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .mobile-nav-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+        
+        .mobile-nav-menu {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            height: 100%;
+            background-color: white;
+            z-index: 1000;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .mobile-nav-menu.active {
+            right: 0;
+        }
+        
+        .mobile-nav-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #19398a 0%, #0143a5 100%);
+            color: white;
+        }
+        
+        .mobile-nav-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+        
+        .mobile-nav-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .mobile-nav-links li {
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .mobile-nav-links a {
+            display: block;
+            padding: 15px 20px;
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.2s ease;
+        }
+        
+        .mobile-nav-links a:hover,
+        .mobile-nav-links a.active {
+            background-color: #f8f9fa;
+            color: #19398a;
+        }
+
+        /* --- Mobile Responsive Overrides (Max-width 768px) --- */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: flex;
+                margin-left: 15px;
+            }
+            
+            .site-navbar-wrap {
+                display: none !important;
+            }
+            
+            .match-timeline-container {
+                padding: 15px;
+            }
+            .timeline-item {
+                flex-direction: column;
+            }
+            .timeline-label {
+                width: 100%;
+                text-align: left;
+                padding-right: 0;
+                padding-left: 20px;
+                order: 1;
+            }
+            .timeline-content {
+                width: 100%;
+                padding-left: 20px;
+                order: 2;
+                margin-top: 15px;
+            }
+
+            .timeline-label::after {
+                height: 0;
+            }
+            .timeline-dot {
+                top: 5px;
+                right: auto;
+                left: 0;
+            }
+            
+            .final-match-detail {
+                flex-direction: column;
+                padding: 15px;
+            }
+            .team-info {
+                width: 100%;
+                margin-bottom: 10px;
+                justify-content: space-between;
+            }
+            .team-info:nth-child(2) {
+                 margin-bottom: 20px;
+            }
+            .vs-text {
+                display: none;
+            }
+            .action-buttons {
+                width: 100%;
+                justify-content: space-around;
+                margin-top: 10px;
+            }
+            .action-icon {
+                margin-right: 5px;
+            }
+            .match-centre-btn {
+                padding: 8px 15px;
+                flex-grow: 1;
+                margin-left: 10px;
+            }
+            .result-text-box {
+                font-size: 1rem;
+                margin-top: 10px;
+                padding-bottom: 10px;
+            }
+        }
+
+        /* Footer Styles */
+        html, body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        #footer-main {
+            background: linear-gradient(135deg, #11141C 0%, #1B1F2A 100%);
+            color: #fff;
+            width: 100%;
+        }
+
+        .footer-top {
+            padding: 50px 20px 30px 20px;
+            text-align: center;
+        }
+
+        .footer-heading {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #f4f3f0;
+        }
+
+        .sponsor-logos {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 40px;
+        }
+
+        .sponsor-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+
+        .sponsor-block:hover {
+            transform: translateY(-5px);
+            filter: brightness(1.1);
+        }
+
+        .sponsor-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .sponsor-logo {
+            max-width: 140px;
+            height: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .sponsor-logo:hover {
+            transform: scale(1.1);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .footer-links a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #fff;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #f7f6f4;
+        }
+
+        .footer-socials a {
+            margin: 0 8px;
+            font-size: 1.2rem;
+            color: #fff;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        .footer-socials a:hover {
+            transform: scale(1.2);
+            color: #fdfdfc;
+        }
+
+        @media (max-width: 992px) {
+            .sponsor-logo {
+                max-width: 120px;
+            }
+            .footer-content {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .sponsor-logo {
+                max-width: 100px;
+            }
+            .footer-heading {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head> 
+<body>
+    <div ng-app="MyApp">
+        <header style="display:block" class="ap-header col-100 floatLft" id="header-main">
+            <div class="ap-stripWht py-2">
+                <div class="container">
+                    <div class="d-flex justify-content-between">
+                        <span class="ap-bcciLogo">
+                            <a href="https://www.bcci.tv/" target="_blank"><img width="23" height="22" src="VPL.png" alt="BCCI Logo"></a> &nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+                            
+                        <span class="ap-socialDiv">
+                            <span>Follow Us</span>
+                            <a href="#" target="_blank" class="twit" aria-label="twitter"></a>
+                            <a href="#" target="_blank" class="insta" aria-label="instagram"></a>
+                            <a href="#" target="_blank" class="fb" aria-label="facebook"></a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="ap-main-header left right col-100 floatLft flexDisplay justifySpace alignCenter flxNav" id="myHeader">
+                <div class="container-fluid container-xl d-flex justify-content-between flex-wrap position-relative p-0">
+                    <div class="ap-ipl-logo"><a href="#"><img width="166" height="83" src="logo.png" aria-label="ipl-logo-new-old" alt="ipl Logo"></a></div>
+                    
+                    <!-- Desktop Navigation -->
+                    <div class="site-navbar-wrap">
+                        <div class="site-navbar site-navbar-target d-flex align-items-center">
+                            <div class="align-items-center">
+                                <nav class="site-navigation text-center">
+                                    <ul class="site-menu main-menu d-none d-lg-block textCenter">                                                                                                                                    
+                                        <li class="active has-children"><a href="#">MATCHES</a></li>
+                                        <li class="has-children"><a href="#">POINTS TABLE</a></li>
+                                        <li class="has-children"><a href="#">VIDEOS</a></li>
+                                        <li class="has-children"><a href="teams.html">TEAMS</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                    
+                   
+                    
+                    <!-- Mobile Menu Toggle -->
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle Menu">
+                        <div class="dot-grid">
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Mobile Navigation Overlay -->
+        <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+        
+        <!-- Mobile Navigation Menu -->
+        <div class="mobile-nav-menu" id="mobileNavMenu">
+            <div class="mobile-nav-header">
+                <h3>vpl 2025 Menu</h3>
+            </div>
+            <ul class="mobile-nav-links">
+                <li><a href="#" class="active">MATCHES</a></li>
+                <li><a href="#">POINTS TABLE</a></li>
+                <li><a href="#">VIDEOS</a></li>
+                <li><a href="#">TEAMS</a></li>
+                <li><a href="#">NEWS</a></li>
+                <li><a href="#">STATS</a></li>
+            </ul>
+        </div>
+
+        <div class="w-100 floatLft">
+            <div class="subnave position-relative">
+                <div class="container py-2">
+                   <a href="#">Matches</a>&nbsp;&nbsp;/&nbsp;&nbsp;
+                    <a href="" id="typename">Results</a>
+                </div>
+            </div>
+
+            <div class="matches-main position-relative">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="matches-title">MATCHES</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="matches-tabs position-relative">
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link active">RESULTS</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="points.html" class="nav-link">POINTS TABLE</a>
+                    </li>
+                </ul>
+            </div>
+
+
+
+
+
+            
+<!--Start of items-->
+            <div class="bottom-section-main w-100 matches-container">
+                <div class="container">
+                    <div class="tab-content">
+                        <div class="tab-pane container active">
+                            <div class="match-timeline-container">
+
+                                <div class="timeline-item">
+                                    <div class="timeline-label">
+                                        <div class="match-stage-tag final">FINAL</div>
+                                        <div class="timeline-dot green"></div>
+                                        <div class="result-text-box">
+                                            Pandarikulam parathesikal WON BY 6 RUNS (WINNERS)
+                                        </div>
+                                    </div>
+                                    <div class="timeline-content">
+                                        <div class="venue-time">
+                                            RDS Stadium, Vavuniya
+                                            <br>
+                                            JUN, TUE 3, 7:30 PM IST
+                                        </div>
+                                        
+                                        <div class="final-match-detail">
+                                            <div class="team-info">
+                                                <img src="teams/VRC.png" alt="RCB Logo" class="team-logo">
+                                                <div class="score-info">
+                                                    <div class="team-name">Pandarikulam parathesikal</div>
+                                                    <span class="score-runs">190/9</span>
+                                                    <span class="score-overs">(20.0 OV)</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="vs-text">V/S</div>
+
+                                            <div class="team-info">
+                                                <img src="teams/VKR.png" alt="PBKS Logo" class="team-logo">
+                                                <div class="score-info">
+                                                    <div class="team-name">Kummankulam Koothikal</div>
+                                                    <span class="score-runs">184/7</span>
+                                                    <span class="score-overs">(20.0 OV)</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="action-buttons">
+                                                <a href="#" class="action-icon" aria-label="Scorecard">📄</a>
+                                                <a href="#" class="action-icon" aria-label="Highlights">▶️</a>
+                                                <a href="match/match1.html" class="match-centre-btn">Match Details</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><br><br>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-label">
+                                        <div class="match-stage-tag final">Semi FINAL</div>
+                                        <div class="timeline-dot green"></div>
+                                        <div class="result-text-box">
+                                            Mumbai indians WON BY 6 RUNS (WINNERS)
+                                        </div>
+                                    </div>
+                                    <div class="timeline-content">
+                                        <div class="venue-time">
+                                            Narendra Modi Stadium, Ahmedabad
+                                            <br>
+                                            JUN, TUE 3, 7:30 PM IST
+                                        </div>
+                                        
+                                        <div class="final-match-detail">
+                                            <div class="team-info">
+                                                <img src="https://documents.iplt20.com/ipl/DC/Logos/LogoOutline/DCoutline.png" alt="RCB Logo" class="team-logo">
+                                                <div class="score-info">
+                                                    <div class="team-name">Pandarikulam parathesikal</div>
+                                                    <span class="score-runs">190/9</span>
+                                                    <span class="score-overs">(20.0 OV)</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="vs-text">V/S</div>
+
+                                            <div class="team-info">
+                                                <img src="https://documents.iplt20.com/ipl/GT/Logos/Logooutline/GToutline.png" alt="PBKS Logo" class="team-logo">
+                                                <div class="score-info">
+                                                    <div class="team-name">Kummankulam Koothikal</div>
+                                                    <span class="score-runs">184/7</span>
+                                                    <span class="score-overs">(20.0 OV)</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="action-buttons">
+                                                <a href="#" class="action-icon" aria-label="Scorecard">📄</a>
+                                                <a href="#" class="action-icon" aria-label="Highlights">▶️</a>
+                                                <a href="match/match2.html" class="match-centre-btn">Match Details</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <br><br>
+
+                                <div class="timeline-item">
+                                    <div class="timeline-label">
+                                        <div class="match-stage-tag final">FINAL</div>
+                                        <div class="timeline-dot green"></div>
+                                        <div class="result-text-box">
+                                            Pandarikulam parathesikal WON BY 6 RUNS (WINNERS)
+                                        </div>
+                                    </div>
+                                    <div class="timeline-content">
+                                        <div class="venue-time">
+                                            Narendra Modi Stadium, Ahmedabad
+                                            <br>
+                                            JUN, TUE 3, 7:30 PM IST
+                                        </div>
+                                        
+                                        <div class="final-match-detail">
+                                            <div class="team-info">
+                                                <img src="https://documents.iplt20.com/ipl/DC/Logos/LogoOutline/DCoutline.png" alt="RCB Logo" class="team-logo">
+                                                <div class="score-info">
+                                                    <div class="team-name">Pandarikulam parathesikal</div>
+                                                    <span class="score-runs">190/9</span>
+                                                    <span class="score-overs">(20.0 OV)</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="vs-text">V/S</div>
+
+                                            <div class="team-info">
+                                                <img src="https://documents.iplt20.com/ipl/GT/Logos/Logooutline/GToutline.png" alt="PBKS Logo" class="team-logo">
+                                                <div class="score-info">
+                                                    <div class="team-name">Kummankulam Koothikal</div>
+                                                    <span class="score-runs">184/7</span>
+                                                    <span class="score-overs">(20.0 OV)</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="action-buttons">
+                                                <a href="#" class="action-icon" aria-label="Scorecard">📄</a>
+                                                <a href="#" class="action-icon" aria-label="Highlights">▶️</a>
+                                                <a href="#" class="match-centre-btn">Match Centre</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+<!--End of items-->
+        <footer id="footer-main">
+            <div class="footer-top">
+                <div class="container">
+                    <br><br>
+                    <h4 class="footer-heading">Sponsors</h4>
+                    <div class="sponsor-logos">
+                        <div class="sponsor-block">
+                            <span class="sponsor-title">Official Broadcaster</span>
+                            <a href="#" target="_blank">
+                                <img src="VPL.png" alt="Start Sports" class="sponsor-logo">
+                            </a>
+                        </div>
+                        <div class="sponsor-block">
+                            <span class="sponsor-title">Title Sponsor</span>
+                            <a href="https://adstores.pages.dev/" target="_blank">
+                                <img src="sponsor_AD.png" alt="Tata" class="sponsor-logo">
+                            </a>
+                        </div>
+                        <div class="sponsor-block">
+                            <span class="sponsor-title">Title Sponsor</span>
+                            <a href="#" target="_blank">
+                                <img src="spon.png" alt="Tata" class="sponsor-logo">
+                            </a>
+                        </div>
+                        <div class="sponsor-block">
+                            <span class="sponsor-title">Title Sponsor</span>
+                            <a href="#" target="_blank">
+                                <img src="spon.png" alt="Tata" class="sponsor-logo">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="container">
+                    <div class="footer-content">
+                        <p>&copy; 2025 vpl. All rights reserved.</p>
+                        <div class="footer-links">
+                            <a href="#">Developed by Abishan</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Mobile Navigation Toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const mobileNavMenu = document.getElementById('mobileNavMenu');
+        const mobileNavOverlay = document.getElementById('mobileNavOverlay');
+
+        function toggleMobileMenu() {
+            mobileMenuToggle.classList.toggle('active');
+            mobileNavMenu.classList.toggle('active');
+            mobileNavOverlay.classList.toggle('active');
+            document.body.style.overflow = mobileNavMenu.classList.contains('active') ? 'hidden' : '';
+        }
+
+        mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+        mobileNavOverlay.addEventListener('click', toggleMobileMenu);
+
+        // Close menu when clicking on a link
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-links a');
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', toggleMobileMenu);
+        });
+    </script>
+</body>
+</html>

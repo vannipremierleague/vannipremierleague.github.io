@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>vpl 2025 Match Results | RCB vs PBKS Scorecard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=3.0">
+    <meta name="theme-color" content="#19398a">
+    <link rel="stylesheet" href="match.css">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://www.iplt20.com/assets/css/ipl-style.min.css">
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    
+    
+</head> 
+<body>
+    <div ng-app="MyApp">
+        <header style="display:block" class="ap-header col-100 floatLft" id="header-main">
+            <div class="ap-stripWht py-2">
+                <div class="container">
+                    <div class="d-flex justify-content-between">
+                        <span class="ap-bcciLogo">
+                            <a href="https://www.bcci.tv/" target="_blank"><img width="23" height="22" src="spon.png" alt="BCCI Logo"> </a> &nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+                            <a href="https://www.wplt20.com/" target="_blank"><img width="45" height="25" src="https://documents.iplt20.com//ipl/assets/images/womens-premier-league-logonew.webp" alt="WPL Logo" class="m-0"></a>
+                        </span>
+                        <span class="ap-socialDiv">
+                            <span>Follow Us</span>
+                            <a href="#" target="_blank" class="twit" aria-label="twitter"></a>
+                            <a href="#" target="_blank" class="insta" aria-label="instagram"></a>
+                            <a href="#" target="_blank" class="fb" aria-label="facebook"></a>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="ap-main-header left right col-100 floatLft flexDisplay justifySpace alignCenter flxNav" id="myHeader">
+                <div class="container-fluid container-xl d-flex justify-content-between flex-wrap position-relative p-0">
+                    <div class="ap-ipl-logo"><a href="#"><img width="166" height="83" src="logo.png" aria-label="ipl-logo-new-old" alt="ipl Logo"></a></div>
+                    
+                    <div class="site-navbar-wrap">
+                        <div class="site-navbar site-navbar-target d-flex align-items-center">
+                            <div class="align-items-center">
+                                <nav class="site-navigation text-center">
+                                    <ul class="site-menu main-menu d-none d-lg-block textCenter">                                                                                                                                                                                                            
+                                        <li class="active has-children"><a href="index.html">MATCHES</a></li>
+                                        <li class="has-children"><a href="points.html">POINTS TABLE</a></li>
+                                        <li class="has-children"><a href="#">VIDEOS</a></li>
+                                        <li class="has-children"><a href="#">TEAMS</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="ap-search">
+                        <div class="fan-viewer">
+                           <a href="#" class="viewers-choice-head ms-0"><img width="79" height="25" src="https://documents.iplt20.com//ipl/assets/images/viewers-choice.webp" aria-label="viewers-choice" alt="Viewers Choice"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="w-100 floatLft">
+            <div class="subnave position-relative">
+                <div class="container py-2">
+                    <a href="#">Home</a>&nbsp;&nbsp;/&nbsp;&nbsp;<a href="#">Matches</a>&nbsp;&nbsp;/&nbsp;&nbsp;
+                    <a href="" id="typename">Match 45 - RCB vs PBKS</a>
+                </div>
+            </div>
+
+            <div class="hero">
+                <div class="hero-content">
+                    <div class="match-header">
+                        <div class="team">
+                            <div class="team-logo" style="background: linear-gradient(135deg, #000 0%, #d40000 100%);">RCB</div>
+                            <div class="team-score">
+                                <h2 id="rcbScore">--/--</h2>
+                                <div class="overs" id="rcbOvers">-- Overs</div>
+                            </div>
+                        </div>
+
+                        <div class="match-status">
+                            <div class="final-badge" id="matchStatus">LIVE</div>
+                        </div>
+
+                        <div class="team">
+                            <div class="team-score" style="text-align: right;">
+                                <h2 id="pbksScore">--/--</h2>
+                                <div class="overs" id="pbksOvers">-- Overs</div>
+                            </div>
+                            <div class="team-logo" style="background: linear-gradient(135deg, #dc143c 0%, #8b0000 100%);">PBKS</div>
+                        </div>
+                    </div>
+
+                    <div class="match-info" id="matchInfo" style="text-align: center;">
+                        Vavuniya rcbScorecard • 03 JUN 2025 • 7:30 PM IST
+                    </div>
+
+                    <div class="overs-display" id="recentOvers">
+                        </div>
+
+                    <div class="result-bar" id="resultBar">
+                        Match details loading...
+                    </div>
+                </div>
+            </div>
+
+            <div class="content">
+                
+                <div class="content">
+                    <div class="innings-tabs">
+                        <button class="innings-tab active" id="rcbInningsTab">RCB Innings</button>
+                        <button class="innings-tab" id="pbksInningsTab">PBKS Innings</button>
+                    </div>
+            
+                    <div class="scorecard" id="rcbScorecard">
+                        <div class="innings-header">
+                            <div class="innings-team">
+                                <div class="innings-logo" style="background: #e74c3c;">RCB</div>
+                                <div>
+                                    <h3>Royal Challengers Bengaluru</h3>
+                                </div>
+                            </div>
+                            <div class="innings-score" id="rcbInningsScore">
+                                Loading...
+                            </div>
+                        </div>
+            
+                        <table class="batting-table">
+                            <thead>
+                                <tr>
+                                    <th>Batter</th>
+                                    <th>R</th>
+                                    <th>B</th>
+                                    <th>4s</th>
+                                    <th>6s</th>
+                                    <th>SR</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rcbPlayersTableBody">
+                            </tbody>
+                        </table>
+            
+                        <div style="padding: 20px 25px; background: #f8f9fa; border-top: 2px solid #e9ecef;">
+                            <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
+                                <div>
+                                    <strong>Extras:</strong> <span id="rcbExtras">--</span>
+                                </div>
+                                <div>
+                                    <strong>Total:</strong> <span id="rcbTotal">--/-- (-- Overs)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="scorecard" id="pbksScorecard" style="display: none;"> 
+                        <div class="innings-header">
+                            <div class="innings-team">
+                                <div class="innings-logo" style="background: #dc143c;">PBKS</div>
+                                <div>
+                                    <h3>Punjab Kings</h3>
+                                </div>
+                            </div>
+                            <div class="innings-score" id="pbksInningsScore">
+                                Loading...
+                            </div>
+                        </div>
+            
+                        <table class="batting-table">
+                            <thead>
+                                <tr>
+                                    <th>Batter</th>
+                                    <th>R</th>
+                                    <th>B</th>
+                                    <th>4s</th>
+                                    <th>6s</th>
+                                    <th>SR</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pbksPlayersTableBody">
+                            </tbody>
+                        </table>
+            
+                        <div style="padding: 20px 25px; background: #f8f9fa; border-top: 2px solid #e9ecef;">
+                            <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
+                                <div>
+                                    <strong>Extras:</strong> <span id="pbksExtras">--</span>
+                                </div>
+                                <div>
+                                    <strong>Total:</strong> <span id="pbksTotal">--/-- (-- Overs)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <div class="bowling-section">
+                        <h3 style="margin-top: 25px;">PBKS Bowling</h3>
+                        <table id="pbks-bowler-scorecard">
+                            <thead>
+                                <tr>
+                                    <th>Bowler</th>
+                                    <th>Overs</th>
+                                    <th>Maidens</th>
+                                    <th>Runs</th>
+                                    <th>Wickets</th>
+                                    <th>Economy</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pbksBowlersTableBody">
+                            </tbody>
+                        </table>
+                        
+                        <hr> 
+                        
+                        <h3>RCB Bowling</h3>
+                        <table id="rcb-bowler-scorecard">
+                            <thead>
+                                <tr>
+                                    <th>Bowler</th>
+                                    <th>Overs</th>
+                                    <th>Maidens</th>
+                                    <th>Runs</th>
+                                    <th>Wickets</th>
+                                    <th>Economy</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rcbBowlersTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+            <div id="footer-main">
+                <div class="footer-top">
+                    <h4 class="footer-heading">Partners & Sponsors</h4>
+                    <div class="sponsor-logos">
+                        <div class="sponsor-block">
+                            <span class="sponsor-title">Title Sponsor</span>
+                            <img src="sponsor1.png" alt="Sponsor 1" class="sponsor-logo">
+                        </div>
+                        <div class="sponsor-block">
+                            <span class="sponsor-title">Official Partner</span>
+                            <img src="sponsor2.png" alt="Sponsor 2" class="sponsor-logo">
+                        </div>
+                        <div class="sponsor-block">
+                            <span class="sponsor-title">Strategic Timeout Partner</span>
+                            <img src="sponsor3.png" alt="Sponsor 3" class="sponsor-logo">
+                        </div>
+                        <div class="sponsor-block">
+                            <span class="sponsor-title">Official Broadcast Partner</span>
+                            <img src="sponsor4.png" alt="Sponsor 4" class="sponsor-logo">
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <div class="container-fluid container-xl footer-content">
+                        <p>© 2025 Indian Premier League. All rights reserved.</p>
+                        <div class="footer-links">
+                            <a href="#">Terms of Use</a>
+                            <a href="#">Privacy Policy</a>
+                            <a href="#">Contact Us</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Configuration (Replace with your actual keys if they are different)
+        const firebaseConfig = {
+            apiKey: "AIzaSyAgRNYcERmBBYfQcXF0PQA5P-Ifqo6O3to",
+            authDomain: "vpl2025-71c32.firebaseapp.com",
+            databaseURL: "https://vpl2025-71c32-default-rtdb.firebaseio.com/",
+            projectId: "vpl2025-71c32",
+            storageBucket: "vpl2025-71c32.firebasestorage.app",
+            messagingSenderId: "239331513898",
+            appId: "1:239331513898:web:1b0179c03591f6de7a1553"
+        };
+    
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const matchRef = db.ref("vpl2025/match2"); // Targetting the 'match2' node
+    
+        // CRITICAL FIX: Helper function to convert player data from Firebase object/array to a simple array
+        function convertPlayersToArray(playerObject) {
+            if (Array.isArray(playerObject)) {
+                return playerObject;
+            }
+            if (typeof playerObject === 'object' && playerObject !== null) {
+                // Returns an array of player objects, handling both numerical keys and Firebase push IDs
+                return Object.values(playerObject).filter(p => p && p.name);
+            }
+            return [];
+        }
+    
+        // Function to create a row for a Batsman (unchanged)
+        function addBatsmanRow(player, tableBodyId) {
+            const tableBody = document.getElementById(tableBodyId);
+            if (!tableBody) return;
+    
+            // Data cleaning and type conversion
+            const runs = parseInt(player.runs) || 0;
+            const balls = parseInt(player.balls) || 0;
+            const fours = parseInt(player.fours) || 0;
+            const sixes = parseInt(player.sixes) || 0;
+    
+            // Calculate Strike Rate (SR = (Runs / Balls) * 100)
+            let sr = (balls > 0) ? ((runs / balls) * 100).toFixed(2) : '0.00';
+    
+            const row = tableBody.insertRow();
+    
+            // 1. Batter (Name)
+            row.insertCell(0).innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="background: #2c3e50; color: white; border-radius: 50%; width: 25px; height: 25px; display: flex; justify-content: center; align-items: center; font-size: 12px;">${player.name.charAt(0)}</span>
+                    <span>${player.name}</span>
+                </div>
+                <small class="dismissal-info">${player.dismissal || ''}</small>
+            `;
+    
+            // 2. R, 3. B, 4. 4s, 5. 6s, 6. SR
+            row.insertCell(1).textContent = runs;
+            row.insertCell(2).textContent = balls;
+            row.insertCell(3).textContent = fours;
+            row.insertCell(4).textContent = sixes;
+            row.insertCell(5).textContent = sr;
+        }
+    
+        // Function to create a row for a Bowler (Minor cleanup for robustness)
+        function addBowlerRow(bowler, tableBodyId) {
+            const tableBody = document.getElementById(tableBodyId);
+            if (!tableBody) return;
+    
+            // Data cleaning and type conversion
+            // Use 'overs' from the bowler object (e.g., "5.2" or 5.2)
+            const oversStr = String(bowler.overs || '0.0'); 
+            const maidens = parseInt(bowler.maidens) || 0;
+            const runs = parseInt(bowler.runsConceded || bowler.runs) || 0; // Use runsConceded or runs
+            const wickets = parseInt(bowler.wickets) || 0;
+    
+            // Economy Calculation: Convert Overs (X.Y) to Total Balls
+            const oversParts = oversStr.split('.');
+            const completeOvers = parseInt(oversParts[0] || 0);
+            const ballsInOver = parseInt(oversParts[1]?.charAt(0) || 0); 
+            const totalBalls = (completeOvers * 6) + ballsInOver;
+    
+            // Economy = (Runs / Total Balls) * 6
+            const economy = (totalBalls > 0) ? ((runs / totalBalls) * 6).toFixed(2) : '0.00';
+            
+            const row = tableBody.insertRow();
+            
+            // 1. Bowler (Name)
+            row.insertCell(0).textContent = bowler.name;
+            // 2. O, 3. M, 4. R, 5. W, 6. Eco
+            row.insertCell(1).textContent = oversStr;
+            row.insertCell(2).textContent = maidens;
+            row.insertCell(3).textContent = runs;
+            row.insertCell(4).textContent = wickets;
+            row.insertCell(5).textContent = economy;
+            
+            if (wickets >= 2) {
+                row.style.fontWeight = 'bold';
+            }
+        }
+    
+        // Function to create the HTML row for a player (for Batting, unchanged)
+        function createPlayerRow(player, teamColor) {
+            const playerInitial = player.name ? player.name.split(' ').map(n => n[0]).join('') : '??';
+            const runs = parseInt(player.runs) || 0;
+            const balls = parseInt(player.balls) || 0;
+            let sr = (balls > 0) ? ((runs / balls) * 100).toFixed(2) : '0.00';
+    
+            const dismissalText = player.dismissal ? `<div class="dismissal">${player.dismissal}</div>` : '<div class="dismissal-info"></div>';
+    
+            return `
+                <tr>
+                    <td>
+                        <div class="player-info">
+                            <div class="player-avatar" style="background: ${teamColor};">${playerInitial}</div>
+                            <div>
+                                <div class="player-name">${player.name || "Unknown Player"}</div>
+                                ${dismissalText}
+                            </div>
+                        </div>
+                    </td>
+                    <td class="stat">${runs}</td>
+                    <td>${balls}</td>
+                    <td>${player.fours || 0}</td>
+                    <td>${player.sixes || 0}</td>
+                    <td class="strike-rate">${sr}</td>
+                </tr>
+            `;
+        }
+    
+        // Main listener function for Firebase data
+        matchRef.on("value", snapshot => {
+            const data = snapshot.val();
+            if (!data) return;
+            
+            // --- 1. Update Hero Section Scores ---
+            // (Unchanged logic for score headers)
+            document.getElementById("rcbScore").innerText = data.rcbScore || "0/0";
+            document.getElementById("rcbOvers").innerText = (data.rcbOvers ? data.rcbOvers : "0.0") + " Overs";
+            document.getElementById("pbksScore").innerText = data.pbksScore || "0/0";
+            document.getElementById("pbksOvers").innerText = (data.pbksOvers ? data.pbksOvers : "0.0") + " Overs";
+            document.getElementById("matchStatus").innerText = data.status || "LIVE";
+            document.getElementById("resultBar").innerText = data.result || "Match in progress...";
+    
+            // --- 2. Update Detailed Innings Scores & Totals ---
+            // (Unchanged logic for inning totals)
+            document.getElementById("rcbInningsScore").innerText = `Overs (${data.rcbOvers || '0.0'}) ${data.rcbScore || '0/0'}`;
+            document.getElementById("rcbExtras").innerHTML = data.rcbExtras || '0 (b 0, lb 0, w 0, nb 0, p 0)';
+            document.getElementById("rcbTotal").innerHTML = `${data.rcbScore || '0/0'} (${data.rcbOvers || '0.0'} Overs, RR: ${data.rcbRr || '0.00'})`;
+            
+            document.getElementById("pbksInningsScore").innerText = `Overs (${data.pbksOvers || '0.0'}) ${data.pbksScore || '0/0'}`;
+            document.getElementById("pbksExtras").innerHTML = data.pbksExtras || '0 (b 0, lb 0, w 0, nb 0, w 0)';
+            document.getElementById("pbksTotal").innerHTML = `${data.pbksScore || '0/0'} (${data.pbksOvers || '0.0'} Overs, RR: ${data.pbksRr || '0.00'})`;
+    
+    
+            // --- 3. Update RCB Players (Batting) Table ---
+            const rcbTableBody = document.getElementById("rcbPlayersTableBody");
+            rcbTableBody.innerHTML = "";
+            const rcbPlayers = convertPlayersToArray(data.rcbPlayers);
+            rcbPlayers.forEach(p => {
+                rcbTableBody.innerHTML += createPlayerRow(p, '#000');
+            });
+    
+            // --- 4. Update PBKS Players (Batting) Table ---
+            const pbksTableBody = document.getElementById("pbksPlayersTableBody");
+            pbksTableBody.innerHTML = "";
+            const pbksPlayers = convertPlayersToArray(data.pbksPlayers);
+            pbksPlayers.forEach(p => {
+                pbksTableBody.innerHTML += createPlayerRow(p, '#dc143c');
+            });
+    
+            // ------------------------------------------------------------------
+            // ✅ FIX APPLIED: Corrected key names from 'rcbBowlers' to 'rcb_bowlers'
+            
+            // --- 5. Update RCB Bowlers Table (Bowled against PBKS) ---
+            const rcbBowlerBody = document.getElementById("rcbBowlersTableBody"); 
+            rcbBowlerBody.innerHTML = "";
+            const rcbBowlers = convertPlayersToArray(data.rcb_bowlers); // ⬅️ FIXED KEY
+            rcbBowlers.forEach(b => {
+                addBowlerRow(b, "rcbBowlersTableBody");
+            });
+            
+            // --- 6. Update PBKS Bowlers Table (Bowled against RCB) ---
+            const pbksBowlerBody = document.getElementById("pbksBowlersTableBody"); 
+            pbksBowlerBody.innerHTML = "";
+            const pbksBowlers = convertPlayersToArray(data.pbks_bowlers); // ⬅️ FIXED KEY
+            pbksBowlers.forEach(b => {
+                addBowlerRow(b, "pbksBowlersTableBody");
+            });
+            // ------------------------------------------------------------------
+            
+            // --- 7. Implement Tab Switching Logic ---
+            // (Unchanged logic for tab switching)
+            const rcbCard = document.getElementById('rcbScorecard');
+            const pbksCard = document.getElementById('pbksScorecard');
+            const rcbTab = document.getElementById('rcbInningsTab');
+            const pbksTab = document.getElementById('pbksInningsTab');
+    
+            rcbTab.onclick = () => {
+                rcbCard.style.display = 'block';
+                pbksCard.style.display = 'none';
+                rcbTab.classList.add('active');
+                pbksTab.classList.remove('active');
+            };
+    
+            pbksTab.onclick = () => {
+                pbksCard.style.display = 'block';
+                rcbCard.style.display = 'none';
+                pbksTab.classList.add('active');
+                rcbTab.classList.remove('active');
+            };
+    
+            // Set default active tab based on which team is currently batting
+            if (data.currentBattingTeam === 'PBKS') {
+                pbksTab.click();
+            } else {
+                rcbTab.click();
+            }
+        });
+    </script>
+    
+</body>
+</html>
